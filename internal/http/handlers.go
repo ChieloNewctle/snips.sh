@@ -49,7 +49,7 @@ func MetaHandler(cfg *config.Config) http.HandlerFunc {
 	}
 }
 
-func DocHandler(assets Assets) http.HandlerFunc {
+func DocHandler(cfg *config.Config, assets Assets) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log := logger.From(r.Context())
 
@@ -77,6 +77,7 @@ func DocHandler(assets Assets) http.HandlerFunc {
 			"FileSize": humanize.Bytes(uint64(len(content))),
 			"FileType": "markdown",
 			"HTML":     md,
+			"BasePath": cfg.HTTP.BasePath,
 		}
 
 		err = assets.Template().ExecuteTemplate(w, "file.go.html", vars)

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -22,8 +23,8 @@ func New(cfg *config.Config, database db.DB, assets Assets) (*Service, error) {
 	router.Use(WithMetrics)
 	router.Use(WithRecover)
 
-	router.Get("/", DocHandler(assets))
-	router.Get("/docs/{name}", DocHandler(assets))
+	router.Get("/", DocHandler(cfg, assets))
+	router.Get("/docs/{name}", DocHandler(cfg, assets))
 	router.Get("/health", HealthHandler)
 	router.Get("/f/{fileID}", FileHandler(cfg, database, assets))
 	router.Get("/assets/index.js", assets.ServeJS)
@@ -34,9 +35,12 @@ func New(cfg *config.Config, database db.DB, assets Assets) (*Service, error) {
 		router.Mount("/_debug", middleware.Profiler())
 	}
 
+	handler := chi.NewRouter()
+	handler.Mount(fmt.Sprintf("/{}", cfg.HTTP.BasePath), router)
+
 	httpServer := &http.Server{
 		Addr:    cfg.HTTP.Internal.Host,
-		Handler: router,
+		Handler: handler,
 	}
 
 	return &Service{httpServer, router}, nil
