@@ -21,8 +21,8 @@
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>"
     />
     <title>{{ .FileID }} - snips.sh</title>
-    <link rel="stylesheet" href="/assets/index.css" />
-    <script type="module" src="/assets/index.js"></script>
+    <link rel="stylesheet" href="{{ .BasePath }}/assets/index.css" />
+    <script type="module" src="{{ .BasePath }}/assets/index.js"></script>
     {{ ExtendedHeadContent }}
   </head>
 
@@ -30,7 +30,7 @@
     <div class="stripes"></div>
     <div class="container">
       <h1 class="title">
-        <a href="/">snips<span class="sh">.sh</span></a>
+        <a href="{{ .BasePath }}/">snips<span class="sh">.sh</span></a>
       </h1>
       <nav class="file-header">
         <div class="file-details">
@@ -63,10 +63,10 @@
         snips.sh is a free, anonymous, open source, snippet hosting service
       </div>
       <div>
-        <a href="/">about</a> |
+        <a href="{{ .BasePath }}/">about</a> |
         <a href="https://github.com/robherley/snips.sh">source code</a> |
-        <a href="/docs/terms-of-service.md">terms of service</a> |
-        <a href="/docs/acceptable-use-policy.md">use policy</a>
+        <a href="{{ .BasePath }}/docs/terms-of-service.md">terms of service</a> |
+        <a href="{{ .BasePath }}/docs/acceptable-use-policy.md">use policy</a>
       </div>
     </footer>
   </body>

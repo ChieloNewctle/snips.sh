@@ -46,6 +46,7 @@ type Config struct {
 	HTTP struct {
 		Internal url.URL `default:"http://localhost:8080" desc:"internal address to listen for http requests"`
 		External url.URL `default:"http://localhost:8080" desc:"external http address displayed in commands"`
+		BasePath string `default:"" desc:"base path for http requests"`
 	}
 
 	HTML struct {
@@ -74,7 +75,7 @@ func (cfg *Config) PrintUsage() error {
 
 func (cfg *Config) HTTPAddressForFile(fileID string) string {
 	httpAddr := cfg.HTTP.External
-	httpAddr.Path = fmt.Sprintf("/f/%s", fileID)
+	httpAddr.Path = fmt.Sprintf("%s/f/%s", cfg.HTTP.BasePath, fileID)
 
 	return httpAddr.String()
 }

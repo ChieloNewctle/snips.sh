@@ -37,7 +37,7 @@ func (f *File) IsMarkdown() bool {
 
 func (f *File) GetSignedURL(cfg *config.Config, ttl time.Duration) (url.URL, time.Time) {
 	pathToSign := url.URL{
-		Path: fmt.Sprintf("/f/%s", f.ID),
+		Path: fmt.Sprintf("%s/f/%s", cfg.HTTP.BasePath, f.ID),
 	}
 
 	signedFileURL, expires := signer.New(cfg.HMACKey).SignURLWithTTL(pathToSign, ttl)

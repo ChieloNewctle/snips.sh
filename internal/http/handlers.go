@@ -180,6 +180,7 @@ func FileHandler(cfg *config.Config, database db.DB, assets Assets) http.Handler
 			"RawHREF":   rawHref,
 			"HTML":      html,
 			"Private":   file.Private,
+			"BasePath":  cfg.HTTP.BasePath,
 		}
 
 		err = tmpl.ExecuteTemplate(w, "file.go.html", vars)
