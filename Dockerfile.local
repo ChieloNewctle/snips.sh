@@ -1,0 +1,33 @@
+FROM golang:1.23.1-bookworm AS build
+
+WORKDIR /build
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+RUN go mod verify
+
+COPY . .
+
+RUN apt-get update && \
+	apt-get install -y libsqlite3-dev && \
+	mkdir /tmp/extra-lib
+
+RUN script/install-libtensorflow; \
+  cp /usr/local/lib/libtensorflow.so.2 /tmp/extra-lib/; \
+  cp /usr/local/lib/libtensorflow_framework.so.2 /tmp/extra-lib/; \
+  go build -a -o 'snips.sh'
+
+FROM debian:bookworm-20240926
+
+COPY --from=build /tmp/extra-lib/* /usr/local/lib/
+COPY --from=build /build/snips.sh /usr/bin/snips.sh
+
+RUN ldconfig
+
+ENV SNIPS_HTTP_INTERNAL=http://0.0.0.0:8080
+ENV SNIPS_SSH_INTERNAL=ssh://0.0.0.0:2222
+
+EXPOSE 8080 2222
+
+ENTRYPOINT [ "/usr/bin/snips.sh" ]
