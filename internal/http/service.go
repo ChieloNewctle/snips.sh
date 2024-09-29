@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -35,12 +34,9 @@ func New(cfg *config.Config, database db.DB, assets Assets) (*Service, error) {
 		router.Mount("/_debug", middleware.Profiler())
 	}
 
-	handler := chi.NewRouter()
-	handler.Mount(fmt.Sprintf("/{}", cfg.HTTP.BasePath), router)
-
 	httpServer := &http.Server{
 		Addr:    cfg.HTTP.Internal.Host,
-		Handler: handler,
+		Handler: router,
 	}
 
 	return &Service{httpServer, router}, nil

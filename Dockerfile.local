@@ -2,6 +2,14 @@ FROM golang:1.23.1-bookworm AS build
 
 WORKDIR /build
 
+COPY script/install-libtensorflow ./script/install-libtensorflow
+RUN apt-get update; \
+  apt-get install -y libsqlite3-dev; \
+  mkdir /tmp/extra-lib; \
+  script/install-libtensorflow; \
+  cp /usr/local/lib/libtensorflow.so.2 /tmp/extra-lib/; \
+  cp /usr/local/lib/libtensorflow_framework.so.2 /tmp/extra-lib/
+
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
@@ -9,14 +17,7 @@ RUN go mod verify
 
 COPY . .
 
-RUN apt-get update && \
-	apt-get install -y libsqlite3-dev && \
-	mkdir /tmp/extra-lib
-
-RUN script/install-libtensorflow; \
-  cp /usr/local/lib/libtensorflow.so.2 /tmp/extra-lib/; \
-  cp /usr/local/lib/libtensorflow_framework.so.2 /tmp/extra-lib/; \
-  go build -a -o 'snips.sh'
+RUN go build -a -o 'snips.sh'
 
 FROM debian:bookworm-20240926
 
